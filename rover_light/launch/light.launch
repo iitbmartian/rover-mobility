@@ -1,0 +1,3 @@
+<launch>
+	<node pkg="rover_light" name="LED_Node" type="relay.py" output="screen" required="true" />
+</launch>
