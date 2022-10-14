@@ -4,7 +4,7 @@ from std_msgs.msg import String
 
 
 class Drive:
-    def __init__(self, driver1, driver2):
+    def __init__(self, driver1, driver2, enb_LED):
         self.rightClaw = driver1
         self.leftClaw = driver2
         self.direction = 0  # Stop:0, Forward:1, Right:2, Backward:3, Left:4
@@ -13,9 +13,11 @@ class Drive:
         self.currents = [0, 0, 0, 0]
         self.current_threshold = 400
         self.autonomous = False
-        self.light_pub = rospy.Publisher('/rover/light', String, queue_size=1)
-        self.color_string_msg = String()
-        self.color_string_msg.data = "None"
+        self.enb_LED = enb_LED
+        if self.enb_LED:
+            self.light_pub = rospy.Publisher('/rover/light', String, queue_size=1)
+            self.color_string_msg = String()
+            self.color_string_msg.data = "None"
 
     def fwd(self):
         self.rightClaw.ForwardM1(0x80, self.speed)
@@ -62,14 +64,15 @@ class Drive:
     def drive_callback(self, inp):
         data = inp.data
         self.speed, self.direction, self.autonomous = int(data[1]), int(data[0]), bool(data[2])
-        if not self.autonomous:
-            self.color_string_msg.data = "Blue"
-            self.light_pub.publish(self.color_string_msg)
-        if self.autonomous:
-            self.color_string_msg.data = "Red"
-            self.light_pub.publish(self.color_string_msg)
+        if self.enb_LED:
+            if not self.autonomous:
+                self.color_string_msg.data = "Blue"
+                self.light_pub.publish(self.color_string_msg)
+            if self.autonomous:
+                self.color_string_msg.data = "Red"
+                self.light_pub.publish(self.color_string_msg)
         if self.direction == 0:
-            rospy.loginfo('Drive: Rover commanded to rest')
+            pass
         elif self.direction == 1:
             rospy.loginfo('Drive: Rover commanded to move Forward')
         elif self.direction == 2:

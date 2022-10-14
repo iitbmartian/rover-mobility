@@ -14,13 +14,20 @@ color_string_msg = String()
 
 # SIGINT Handler to escape loops. Use Ctrl-C to exit
 def sigint_handler(signal, frame):
-    color_string_msg.data = "None"
-    light_pub.publish(color_string_msg)
+    if enb_LED:
+        color_string_msg.data = "None"
+        light_pub.publish(color_string_msg)
     Drive.stop()
     sys.exit(0)
 
 
 if __name__ == "__main__":
+    enb_LEDq = input("Enable LEDs? ")
+    if enb_LEDq == "y" or enb_LEDq == "Y" or \
+            enb_LEDq == "yes" or enb_LEDq == "Yes":
+        enb_LED = True
+    else:
+        enb_LED = False
     signal.signal(signal.SIGINT, sigint_handler)
 
     rospy.init_node("Drive_Node")
@@ -46,7 +53,7 @@ if __name__ == "__main__":
     rospy.loginfo("Connected to Drive Left Claw")
 
     # initialising Drive object-------------------
-    Drive = Drive(rightClaw, leftClaw)
+    Drive = Drive(rightClaw, leftClaw, enb_LED)
     Drive.stop()
 
     rospy.loginfo("Subscribing to /rover/drive_directives")

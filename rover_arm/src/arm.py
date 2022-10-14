@@ -21,32 +21,30 @@ def enable_actuators_motors():
     enb_all = input("Enable all Actuators/Motors? ")
     if enb_all == "y" or enb_all == "Y" or enb_all == "yes" or enb_all == "Yes":
         enable_shoulder_elbow_actuators = True
-        enable_wrist_finger_actuators = True
-        enable_base_gripper = True
+        enable_base_finger_motors = True
+        enable_wrist_rotation_motors = True
     else:
-        enb_shoulder_elbow_actuators = input("Enable Shoulder Elbow Actuators ")
+        enb_shoulder_elbow_actuators = input("Enable Shoulder Elbow Actuators? ")
         if enb_shoulder_elbow_actuators == "y" or enb_shoulder_elbow_actuators == "Y" or \
                 enb_shoulder_elbow_actuators == "yes" or enb_shoulder_elbow_actuators == "Yes":
             enable_shoulder_elbow_actuators = True
         else:
             enable_shoulder_elbow_actuators = False
 
-        enb_wrist_finger_actuators = input("Enable Wrist Finger Actuators ")
-        if enb_wrist_finger_actuators == "y" or enb_wrist_finger_actuators == "Y" or \
-                enb_wrist_finger_actuators == "yes" or enb_wrist_finger_actuators == "Yes":
-            enable_wrist_finger_actuators = True
+        enb_base_finger_motors = input("Enable Base Finger Motors? ")
+        if enb_base_finger_motors == "y" or enb_base_finger_motors == "Y" or \
+                enb_base_finger_motors == "yes" or enb_base_finger_motors == "Yes":
+            enable_base_finger_motors = True
         else:
-            enable_wrist_finger_actuators = False
+            enable_base_finger_motors = False
 
-        enb_base_gripper = input("Enable Base Gripper Motors ")
-        if enb_base_gripper== "y" or enb_base_gripper == "Y" or \
-                enb_base_gripper == "yes" or enb_base_gripper == "Yes":
-            enable_base_gripper = True
+        enb_wrist_rotation_motors = input("Enable Wrist Rotation Motors? ")
+        if enb_wrist_rotation_motors == "y" or enb_wrist_rotation_motors == "Y" or \
+                enb_wrist_rotation_motors == "yes" or enb_wrist_rotation_motors == "Yes":
+            enable_wrist_rotation_motors = True
         else:
-            enable_base_gripper = False
-
-    print(enable_shoulder_elbow_actuators, enable_wrist_finger_actuators, enable_base_gripper)
-    return enable_shoulder_elbow_actuators, enable_wrist_finger_actuators, enable_base_gripper
+            enable_wrist_rotation_motors = False
+    return enable_shoulder_elbow_actuators, enable_base_finger_motors, enable_wrist_rotation_motors
 
 
 if __name__ == "__main__":
@@ -55,7 +53,7 @@ if __name__ == "__main__":
     rospy.init_node("Arm_Node")
     rospy.loginfo("Starting Arm_Node")
     iter_time = rospy.Rate(1)
-    enable_shoulder_elbow_actuators, enable_wrist_finger_actuators, enable_base_gripper = enable_actuators_motors()
+    enable_shoulder_elbow_actuators, enable_base_finger_motors, enable_wrist_rotation_motors = enable_actuators_motors()
 
     if enable_shoulder_elbow_actuators:
         while True:
@@ -69,32 +67,32 @@ if __name__ == "__main__":
     else:
         shoulder_elbow_actuators = None
 
-    if enable_wrist_finger_actuators:
+    if enable_base_finger_motors:
         while True:
             try:
-                wrist_finger_actuators = Roboclaw("/dev/wrist_finger_actuators", 9600)
+                base_finger_motors = Roboclaw("/dev/base_finger_motors", 9600)
                 break
             except SerialException:
-                rospy.logwarn("Could not connect to Wrist and Finger Claw, retrying...")
+                rospy.logwarn("Could not connect to Base and Finger Claw, retrying...")
                 iter_time.sleep()
-        rospy.loginfo("Connected to Wrist and Finger Claw")
+        rospy.loginfo("Connected to Base and Finger Claw")
     else:
-        wrist_finger_actuators = None
+        base_finger_motors = None
 
-    if enable_base_gripper:
+    if enable_wrist_rotation_motors:
         while True:
             try:
-                base_gripper = Roboclaw("/dev/base_gripper", 9600)
+                wrist_rotation_motors = Roboclaw("/dev/wrist_rotation_motors", 9600)
                 break
             except SerialException:
-                rospy.logwarn("Could not connect to Base and Gripper Claw, retrying...")
+                rospy.logwarn("Could not connect to Wrist and Rotation Claw, retrying...")
                 iter_time.sleep()
-        rospy.loginfo("Connected to Base and Gripper Claw")
+        rospy.loginfo("Connected to Base and Rotation Claw")
     else:
-        base_gripper = None
+        wrist_rotation_motors = None
 
     # initialising Arm Object-------------------
-    Arm = Arm(shoulder_elbow_actuators, wrist_finger_actuators, base_gripper)
+    Arm = Arm(shoulder_elbow_actuators, base_finger_motors, wrist_rotation_motors)
     Arm.arm_stop()
 
     rospy.loginfo("Subscribing to /rover/arm_directives...")
