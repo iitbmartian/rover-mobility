@@ -39,15 +39,15 @@ class Drive:
 
     def left(self):
         self.rightClaw.ForwardM1(0x80, self.speed)
-        self.rightClaw.ForwardM2(0x80, self.speed)
-        self.leftClaw.BackwardM1(0x80, self.speed)
+        self.rightClaw.BackwardM2(0x80, self.speed)
+        self.leftClaw.ForwardM1(0x80, self.speed)
         self.leftClaw.BackwardM2(0x80, self.speed)
 
     def right(self):
         self.rightClaw.BackwardM1(0x80, self.speed)
-        self.rightClaw.BackwardM2(0x80, self.speed)
+        self.rightClaw.ForwardM2(0x80, self.speed)
         self.leftClaw.ForwardM1(0x80, self.speed)
-        self.leftClaw.ForwardM2(0x80, self.speed)
+        self.leftClaw.BackwardM2(0x80, self.speed)
 
     def update_steer(self):
         if self.direction == 0:
