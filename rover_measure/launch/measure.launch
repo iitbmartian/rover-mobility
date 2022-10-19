@@ -1,0 +1,3 @@
+<launch>
+	<node pkg="rover_measure" name="Measure_Node" type="measure.py" output="screen" required="true" />
+</launch>
