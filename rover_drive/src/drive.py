@@ -4,6 +4,7 @@ from roboclaw_3 import Roboclaw
 from drive_commands import Drive
 import rospy
 from std_msgs.msg import Float64MultiArray, String
+from rover_msgs.msg import drive_msg
 from serial.serialutil import SerialException as SerialException
 import signal
 import sys
@@ -57,7 +58,7 @@ if __name__ == "__main__":
     Drive.stop()
 
     rospy.loginfo("Subscribing to /rover/drive_directives")
-    rospy.Subscriber("/rover/drive_directives", Float64MultiArray, Drive.drive_callback)
+    rospy.Subscriber("/rover/drive_directives", drive_msg, Drive.drive_callback)
     rospy.loginfo("Subscribed to /rover/drive_directives")
     run_time = rospy.Rate(10)
 

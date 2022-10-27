@@ -7,12 +7,12 @@ class Drive:
     def __init__(self, driver1, driver2, enb_LED):
         self.rightClaw = driver1
         self.leftClaw = driver2
-        self.direction = 0  # Stop:0, Forward:1, Right:2, Backward:3, Left:4
+        self.direction = "stop"  # Stop:0, Forward:1, Right:2, Backward:3, Left:4
         self.speed = 0
         self.current_exceeded = False
         self.currents = [0, 0, 0, 0]
         self.current_threshold = 400
-        self.autonomous = False
+        self.mode = "manual"
         self.enb_LED = enb_LED
         if self.enb_LED:
             self.light_pub = rospy.Publisher('/rover/light', String, queue_size=1)
@@ -50,36 +50,36 @@ class Drive:
         self.leftClaw.BackwardM2(0x80, self.speed)
 
     def update_steer(self):
-        if self.direction == 0:
+        if self.direction == "stop":
             self.stop()
-        elif self.direction == 1:
+        elif self.direction == "forward":
             self.fwd()
-        elif self.direction == 2:
+        elif self.direction == "clockwise":
             self.right()
-        elif self.direction == 3:
+        elif self.direction == "backward":
             self.bwd()
-        elif self.direction == 4:
+        elif self.direction == "anticlockwise":
             self.left()
 
     def drive_callback(self, inp):
         data = inp.data
-        self.speed, self.direction, self.autonomous = int(data[1]), int(data[0]), bool(data[2])
+        self.speed, self.direction, self.autonomous = inp.speed, inp.direction, inp.
         if self.enb_LED:
-            if not self.autonomous:
+            if self.autonomous == "manual":
                 self.color_string_msg.data = "Blue"
                 self.light_pub.publish(self.color_string_msg)
-            if self.autonomous:
+            if self.autonomous == "autonomous":
                 self.color_string_msg.data = "Red"
                 self.light_pub.publish(self.color_string_msg)
-        if self.direction == 0:
+        if self.direction == "stop":
             pass
-        elif self.direction == 1:
+        elif self.direction == "forward":
             rospy.loginfo('Drive: Rover commanded to move Forward')
-        elif self.direction == 2:
+        elif self.direction == "clockwise":
             rospy.loginfo('Drive: Rover commanded to turn Clockwise')
-        elif self.direction == 3:
+        elif self.direction == "backward":
             rospy.loginfo('Drive: Rover commanded to move Backward')
-        elif self.direction == 4:
+        elif self.direction == "anticlockwise":
             rospy.loginfo('Drive: Rover commanded to turn Anti-Clockwise')
 
     def current_limiter(self):

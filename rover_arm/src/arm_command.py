@@ -12,16 +12,16 @@ class Arm:
         self.currents = [0, 0, 0, 0, 0, 0]
         self.current_threshold = 400
         self.shoulder_actuator = {'name': "Shoulder Actuator", 'speed': 0,
-                                  'direction': 0}  # Claw1M1; Stop: 0, Up: 1, Down: -1
+                                  'direction': "stop"}  # Claw1M1; Stop: 0, Up: 1, Down: -1
         self.elbow_actuator = {'name': "Elbow Actuator", 'speed': 0,
-                               'direction': 0}  # Claw1M2; Stop: 0, Extend: 1, Contract: -1\
+                               'direction': "stop"}  # Claw1M2; Stop: 0, Extend: 1, Contract: -1\
         self.base_motor = {'name': "Base Rotation", 'speed': 0,
-                           'direction': 0}  # Claw3M1; Stop: 0, Clockwise: 1, Anticlockwise: -1
+                           'direction': "stop"}  # Claw3M1; Stop: 0, Clockwise: 1, Anticlockwise: -1
         self.finger_motor = {'name': "Finger Actuator", 'speed': 0,
-                             'direction': 0}  # Claw2M1; Stop: 0, Clockwise: 1, Anticlockwise: -1
-        self.wrist_actuator = {'name': "Wrist Actuator", 'speed': 0, 'direction': 0}  # Claw2M2; Stop: 0, .: 1, .: -1
+                             'direction': "stop"}  # Claw2M1; Stop: 0, Clockwise: 1, Anticlockwise: -1
+        self.wrist_actuator = {'name': "Wrist Actuator", 'speed': 0, 'direction': "stop"}  # Claw2M2; Stop: 0, .: 1, .: -1
         self.rotation_motor = {'name': "Gripper Motor", 'speed': 0,
-                               'direction': 0}  # Claw3M2; Stop: 0, close: 1, open: -1
+                               'direction': "stop"}  # Claw3M2; Stop: 0, close: 1, open: -1
 
     def update_arm_steer(self):
         if self.shoulder_elbow_actuators is not None:
@@ -36,12 +36,12 @@ class Arm:
 
     def arm_callback(self, inp):
         data = inp.data
-        self.shoulder_actuator['speed'], self.shoulder_actuator['direction'] = int(data[1]), int(data[0])
-        self.elbow_actuator['speed'], self.elbow_actuator['direction'] = int(data[3]), int(data[2])
-        self.base_motor['speed'], self.base_motor['direction'] = int(data[5]), int(data[4])
-        self.finger_motor['speed'], self.finger_motor['direction'] = int(data[7]), int(data[6])
-        self.wrist_actuator['speed'], self.wrist_actuator['direction'] = int(data[9]), int(data[8])
-        self.rotation_motor['speed'], self.rotation_motor['direction'] = int(data[11]), int(data[10])
+        self.shoulder_actuator['speed'], self.shoulder_actuator['direction'] = inp.shoulder_actuator.speed, inp.shoulder_actuator.direction
+        self.elbow_actuator['speed'], self.elbow_actuator['direction'] = inp.inp.shoulder_actuator.speed, inp.shoulder_actuator.direction
+        self.base_motor['speed'], self.base_motor['direction'] = inp.base_motor.speed, inp.base_motor.direction
+        self.finger_motor['speed'], self.finger_motor['direction'] = inp.finger_motor.speed, inp.finger_motor.direction
+        self.wrist_actuator['speed'], self.wrist_actuator['direction'] = inp.wrist_actuator.speed, inp.wrist_actuator.direction
+        self.rotation_motor['speed'], self.rotation_motor['direction'] = inp.rotation_motor.speed, inp.rotation_motor.direction
 
     def arm_stop(self):
         rospy.loginfo('Arm: ' + "Arm commanded to stop")
@@ -56,24 +56,24 @@ class Arm:
             self.wrist_rotation_motors.ForwardM2(0x80, 0)
 
     def runclawM1(self, claw, cmd_dict):
-        if cmd_dict['direction'] == 0:
+        if cmd_dict['direction'] == "stop":
             claw.ForwardM1(0x80, 0)
-        if cmd_dict['direction'] == 1:
+        if cmd_dict['direction'] == "forward":
             claw.ForwardM1(0x80, cmd_dict['speed'])
-            rospy.loginfo('Arm: ' + cmd_dict['name'] + ' commanded to move in Direction=1')
-        if cmd_dict['direction'] == -1:
+            rospy.loginfo('Arm: ' + cmd_dict['name'] + ' commanded to move in Direction = 1')
+        if cmd_dict['direction'] == "backward":
             claw.BackwardM1(0x80, cmd_dict['speed'])
-            rospy.loginfo('Arm: ' + cmd_dict['name'] + ' commanded to move in Direction=-1')
+            rospy.loginfo('Arm: ' + cmd_dict['name'] + ' commanded to move in Direction = -1')
 
     def runclawM2(self, claw, cmd_dict):
-        if cmd_dict['direction'] == 0:
+        if cmd_dict['direction'] == "stop":
             claw.ForwardM2(0x80, 0)
-        if cmd_dict['direction'] == 1:
+        if cmd_dict['direction'] == "forward":
             claw.ForwardM2(0x80, cmd_dict['speed'])
-            rospy.loginfo('Arm: ' + cmd_dict['name'] + ' commanded to move in Direction=1')
-        if cmd_dict['direction'] == -1:
+            rospy.loginfo('Arm: ' + cmd_dict['name'] + ' commanded to move in Direction = 1')
+        if cmd_dict['direction'] == "backward":
             claw.BackwardM2(0x80, cmd_dict['speed'])
-            rospy.loginfo('Arm: ' + cmd_dict['name'] + ' commanded to move in Direction=-1')
+            rospy.loginfo('Arm: ' + cmd_dict['name'] + ' commanded to move in Direction = -1')
 
     def current_limiter(self):
         if self.shoulder_elbow_actuators is not None:

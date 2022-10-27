@@ -4,6 +4,7 @@ from arm_command import Arm
 from roboclaw_3 import Roboclaw
 import rospy
 from std_msgs.msg import Float64MultiArray
+from rover_msgs import arm_msg
 from serial.serialutil import SerialException as SerialException
 import signal
 import sys
@@ -96,7 +97,7 @@ if __name__ == "__main__":
     Arm.arm_stop()
 
     rospy.loginfo("Subscribing to /rover/arm_directives...")
-    rospy.Subscriber("/rover/arm_directives", Float64MultiArray, Arm.arm_callback)
+    rospy.Subscriber("/rover/arm_directives", arm_msg, Arm.arm_callback)
     rospy.loginfo("Subscribed to /rover/arm_directives")
     run_time = rospy.Rate(10)
     while not rospy.is_shutdown():
