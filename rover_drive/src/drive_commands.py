@@ -57,7 +57,7 @@ class Drive:
             self.left()
 
     def drive_callback(self, inp):
-        self.speed, self.direction, self.mode = inp.speed, inp.direction, inp.mode
+        self.speed, self.direction, self.mode = int(inp.speed), inp.direction, inp.mode
         if self.direction == "stop":
             pass
         elif self.direction == "forward":
