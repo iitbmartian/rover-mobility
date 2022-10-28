@@ -9,26 +9,14 @@ from serial.serialutil import SerialException as SerialException
 import signal
 import sys
 
-light_pub = rospy.Publisher('/rover/light', String, queue_size=1)
-color_string_msg = String()
-
 
 # SIGINT Handler to escape loops. Use Ctrl-C to exit
 def sigint_handler(signal, frame):
-    if enb_LED:
-        color_string_msg.data = "None"
-        light_pub.publish(color_string_msg)
     Drive.stop()
     sys.exit(0)
 
 
 if __name__ == "__main__":
-    enb_LEDq = input("Enable LEDs? ")
-    if enb_LEDq == "y" or enb_LEDq == "Y" or \
-            enb_LEDq == "yes" or enb_LEDq == "Yes":
-        enb_LED = True
-    else:
-        enb_LED = False
     signal.signal(signal.SIGINT, sigint_handler)
 
     rospy.init_node("Drive_Node")
@@ -37,24 +25,24 @@ if __name__ == "__main__":
 
     while True:
         try:
-            rightClaw = Roboclaw("/dev/Rdrive", 9600)
+            frontClaw = Roboclaw("/dev/Fdrive", 9600)
             break
         except SerialException:
-            rospy.logwarn("Couldn't connect to Drive Right Claw. trying again...")
+            rospy.logwarn("Couldn't connect to Front Drive Claw. trying again...")
             iter_time.sleep()
-    rospy.loginfo("Connected to Drive Right Claw")
+    rospy.loginfo("Connected to Front Drive Claw")
 
     while True:
         try:
-            leftClaw = Roboclaw("/dev/Ldrive", 9600)
+            backClaw = Roboclaw("/dev/Bdrive", 9600)
             break
         except SerialException:
-            rospy.logwarn("Couldn't connect to Drive Left Claw. trying again...")
+            rospy.logwarn("Couldn't connect to Back Drive Claw. trying again...")
             iter_time.sleep()
-    rospy.loginfo("Connected to Drive Left Claw")
+    rospy.loginfo("Connected to Back Drive Claw")
 
     # initialising Drive object-------------------
-    Drive = Drive(rightClaw, leftClaw, enb_LED)
+    Drive = Drive(frontClaw, backClaw)
     Drive.stop()
 
     rospy.loginfo("Subscribing to /rover/drive_directives")

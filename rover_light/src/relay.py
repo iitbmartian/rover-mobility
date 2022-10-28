@@ -3,7 +3,9 @@
 import relay_commands
 import rospy
 from std_msgs.msg import String
+from rover_msgs.msg import drive_msg, arm_msg
 import signal
+
 
 # Blue - 2, Red - 3, Green - 4
 
@@ -13,14 +15,13 @@ def sigint_handler(signal, frame):
     rb.switchoff(4)
 
 
-def led_callback(color):
-    Color = color.data
-    if Color == "Red" or Color == "RED" or Color == "R" or Color == "r" or Color == "red":
-        rb.switchon(3)
-    elif Color == "Blue" or Color == "BLUE" or Color == "B" or Color == "b" or Color == "blue":
-        rb.switchon(2)
-    elif Color == "Green" or Color == "GREEN" or Color == "G" or Color == "g" or Color == "green":
-        rb.switchon(4)
+def led_callback(inp):
+    if inp.mode == "autonomous":
+        rb.switchon(3)  # Red
+    elif inp.mode == "manual":
+        rb.switchon(2)  # Blue
+    elif inp.mode == "none":
+        rb.switchon(4)  # Green
     else:
         rb.switchoff(2)
         rb.switchoff(3)
@@ -37,5 +38,8 @@ if __name__ == "__main__":
     dev_list = rb.list_dev()
     dev = dev_list[0]
     rb.connect(dev)
-    rospy.Subscriber("/rover/light", String, led_callback)
+    rb.switchoff(2)
+    rb.switchoff(3)
+    rb.switchoff(4)
+    rospy.Subscriber("/rover/drive_directives", drive_msg, led_callback)
     rospy.spin()
