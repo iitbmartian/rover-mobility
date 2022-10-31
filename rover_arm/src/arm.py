@@ -4,7 +4,7 @@ from arm_command import Arm
 from roboclaw_3 import Roboclaw
 import rospy
 from std_msgs.msg import Float64MultiArray
-from rover_msgs import arm_msg
+from rover_msgs.msg import arm_msg
 from serial.serialutil import SerialException as SerialException
 import signal
 import sys

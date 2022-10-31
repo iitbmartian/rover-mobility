@@ -77,7 +77,7 @@ if __name__ == "__main__":
     if enable_Rdrive:
         while True:
             try:
-                Rdrive = Roboclaw("/dev/Rdrive", 9600)
+                Rdrive = Roboclaw("/dev/Fdrive", 9600)
                 break
             except SerialException:
                 rospy.logwarn("Could not connect to Rdrive Claw, retrying...")
@@ -89,7 +89,7 @@ if __name__ == "__main__":
     if enable_Ldrive:
         while True:
             try:
-                Ldrive = Roboclaw("/dev/Ldrive", 9600)
+                Ldrive = Roboclaw("/dev/Bdrive", 9600)
                 break
             except SerialException:
                 rospy.logwarn("Could not connect to Ldrive Claw, retrying...")

@@ -35,13 +35,12 @@ class Arm:
             self.runclawM2(self.wrist_rotation_motors, self.rotation_motor)
 
     def arm_callback(self, inp):
-        data = inp.data
-        self.shoulder_actuator['speed'], self.shoulder_actuator['direction'] = inp.shoulder_actuator.speed, inp.shoulder_actuator.direction
-        self.elbow_actuator['speed'], self.elbow_actuator['direction'] = inp.inp.shoulder_actuator.speed, inp.shoulder_actuator.direction
-        self.base_motor['speed'], self.base_motor['direction'] = inp.base_motor.speed, inp.base_motor.direction
-        self.finger_motor['speed'], self.finger_motor['direction'] = inp.finger_motor.speed, inp.finger_motor.direction
-        self.wrist_actuator['speed'], self.wrist_actuator['direction'] = inp.wrist_actuator.speed, inp.wrist_actuator.direction
-        self.rotation_motor['speed'], self.rotation_motor['direction'] = inp.rotation_motor.speed, inp.rotation_motor.direction
+        self.shoulder_actuator['speed'], self.shoulder_actuator['direction'] = int(inp.shoulder_actuator.speed), inp.shoulder_actuator.direction
+        self.elbow_actuator['speed'], self.elbow_actuator['direction'] = int(inp.elbow_actuator.speed), inp.elbow_actuator.direction
+        self.base_motor['speed'], self.base_motor['direction'] = int(inp.base_motor.speed), inp.base_motor.direction
+        self.finger_motor['speed'], self.finger_motor['direction'] = int(inp.finger_motor.speed), inp.finger_motor.direction
+        self.wrist_actuator['speed'], self.wrist_actuator['direction'] = int(inp.wrist_actuator.speed), inp.wrist_actuator.direction
+        self.rotation_motor['speed'], self.rotation_motor['direction'] = int(inp.rotation_motor.speed), inp.rotation_motor.direction
 
     def arm_stop(self):
         rospy.loginfo('Arm: ' + "Arm commanded to stop")

@@ -7,11 +7,11 @@ class Drive:
     def __init__(self, driver1, driver2):
         self.frontClaw = driver1
         self.backClaw = driver2
-        self.direction = "stop"  # Stop:0, Forward:1, Right:2, Backward:3, Left:4
+        self.direction = "stop"
         self.speed = 0
         self.current_exceeded = False
         self.currents = [0, 0, 0, 0]
-        self.current_threshold = 400
+        self.current_threshold = 1000
         self.mode = "manual"
 
     def fwd(self):
@@ -42,7 +42,7 @@ class Drive:
         self.frontClaw.BackwardM1(0x80, self.speed)
         self.frontClaw.ForwardM2(0x80, self.speed)
         self.backClaw.BackwardM1(0x80, self.speed)
-        self.backClaw.FodM2(0x80, self.speed)
+        self.backClaw.ForwardM2(0x80, self.speed)
 
     def update_steer(self):
         if self.direction == "stop":
