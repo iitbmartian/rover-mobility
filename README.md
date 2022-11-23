@@ -51,15 +51,3 @@ All 6 roboclaws are to be setup in packet serial modes. <br/>
 | rover_measure | Measuring voltage and current supply | - | `/rover/measure` |
 
 `rover_msg` contains the custom ROS message types `arm_msg` and `drive_msg`
-
-| Hostname | IP | Description (Ubuntu Version) |
-| --- | --- | --- |
-| MRT-NUC | 192.168.2.2 | Rover |
-| iitbmartian-H310M-S2 | 192.168.2.3 | LabPC(20.04) |
-| Pijames-ASUS | 192.168.2.4 | Annirudh Lappy - basestation |
-| lenovo | 192.168.2.5 | Khush Lappy - basestation |
-| Predator | 192.168.2.6 | Harsh Lappy - basestation |
-| vedika-ubuntu | 192.168.2.7 | Vedika Lappy - basestation |
-| nishant | 192.168.2.8 | Nishant Lappy - basestation |
-
-
