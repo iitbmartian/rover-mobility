@@ -1,3 +1,20 @@
+# Setting up the NUC
+
+Install Ubuntu (username: rover, hostname: MRT-NUC), Open-SSH, Git, ROS-Noetic and Alias python3 as python
+
+## Setting up SSH
+
+* Connect the NUC via wired network (LAN) to the Router
+* Setup the IP Address as 192.168.2.2 and Netmask as 255.255.255.0
+* Add it to /etc/hosts file for hostname resolution (required for ROS setup)
+* Add the IP Address of base station as well (for example: 192.168.2.3 iitbmartian-H310M-S2)
+* Reboot the NUC
+
+## Creating Workspace
+
+* Create a new directory `rover_ws`, create directory `src`, and run `catkin_make`
+* Git pull `rover-mobility` in src, and `catkin_make`
+
 # Rover Mobility Packages
 Repository for Rover Mobility Codes, IITB Mars Rover Team 22-23
 
@@ -5,8 +22,8 @@ Repository for Rover Mobility Codes, IITB Mars Rover Team 22-23
 
 ### Roboclaw Documentation
 All 6 roboclaws are to be setup in packet serial modes. <br/>
-* [Roboclaw User Manual](http://downloads.ionmc.com/docs/roboclaw_user_manual.pdf)
-* [Roboclaw Datasheet](http://downloads.ionmc.com/docs/roboclaw_datasheet_2x45A.pdf)
+* [Roboclaw User Manual](https://downloads.basicmicro.com/docs/roboclaw_user_manual.pdf)
+* [Roboclaw Datasheet](http://downloads.basicmicro.com/docs/roboclaw_datasheet_2x45A.pdf)
 
 ### Locking the Roboclaws
 * After powering on all the roboclaws and connecting to the NUC, use `cd /dev` to move into the dev directory and use `ls -ll` to display all the plugged in connections. Ensure there exists 6 `/ttyACM*` connections. (* - 0 to 5)
@@ -14,17 +31,25 @@ All 6 roboclaws are to be setup in packet serial modes. <br/>
    `udevadm info -a -n /dev/ttyACM* | grep '{devpath}'`<br/> (do it for all * - 0 to 5)
 * Make a .rules file in `/etc/udev/rules.d` starting with numbers above 50 (eg 72-\<filename\>.rules)
 * The six Roboclaws are to be given the following SYMLINK names: <br/>
-  Ldrive, Rdrive, Cdrive, shoulder_elbow_actuators, base_finger_motors, wrist_rotation_motors
+  Fdrive, Bdrive, Cdrive, shoulder_elbow_actuators, base_finger_motors, wrist_rotation_motors
 * Current rules files is as shown, and modify parameters accordingly
 
-`ACTION=="add", ATTRS{product}=="USB Roboclaw 2x45A" ,ATTRS{devpath}=="5.1" ,SYMLINK+="shoulder_elbow_actuators", OWNER="rover", GROUP="rover"
-ACTION=="add", ATTRS{product}=="USB Roboclaw 2x45A" ,ATTRS{devpath}=="5.2" ,SYMLINK+="base_finger_motors", OWNER="rover", GROUP="rover"
-ACTION=="add", ATTRS{product}=="USB Roboclaw 2x45A" ,ATTRS{devpath}=="5.3" ,SYMLINK+="wrist_rotation_motors", OWNER="rover", GROUP="rover"
-ACTION=="add", ATTRS{product}=="USB Roboclaw 2x45A" ,ATTRS{devpath}=="6.1" ,SYMLINK+="Ldrive", OWNER="rover", GROUP="rover"
-ACTION=="add", ATTRS{product}=="USB Roboclaw 2x45A" ,ATTRS{devpath}=="6.3" ,SYMLINK+="Rdrive", OWNER="rover", GROUP="rover"`
+`ACTION=="add", ATTRS{product}=="USB Roboclaw 2x45A" ,ATTRS{devpath}=="1.1" ,SYMLINK+="shoulder_elbow_actuators", OWNER="rover", GROUP="rover"`<br/>
+`ACTION=="add", ATTRS{product}=="USB Roboclaw 2x45A" ,ATTRS{devpath}=="1.2" ,SYMLINK+="base_finger_motors", OWNER="rover", GROUP="rover"`<br/>
+`ACTION=="add", ATTRS{product}=="USB Roboclaw 2x45A" ,ATTRS{devpath}=="1.3" ,SYMLINK+="wrist_rotation_motors", OWNER="rover", GROUP="rover"`<br/>
+`ACTION=="add", ATTRS{product}=="USB Roboclaw 2x45A" ,ATTRS{devpath}=="2.1" ,SYMLINK+="Fdrive", OWNER="rover", GROUP="rover"`<br/>
+`ACTION=="add", ATTRS{product}=="USB Roboclaw 2x45A" ,ATTRS{devpath}=="2.3" ,SYMLINK+="Bdrive", OWNER="rover", GROUP="rover"`
 
 *Change devpath/product etc to get your device running. Don't forget to `sudo udev restart` after publishing new rules for a device
 
-
+| Hostname | IP | Description (Ubuntu Version) |
+| --- | --- | --- |
+| MRT-NUC | 192.168.2.2 | Rover |
+| iitbmartian-H310M-S2 | 192.168.2.3 | LabPC(20.04) |
+| Pijames-ASUS | 192.168.2.4 | Annirudh Lappy - basestation |
+| lenovo | 192.168.2.5 | Khush Lappy - basestation |
+| Predator | 192.168.2.6 | Harsh Lappy - basestation |
+| vedika-ubuntu | 192.168.2.7 | Vedika Lappy - basestation |
+| nishant | 192.168.2.8 | Nishant Lappy - basestation |
 
 
