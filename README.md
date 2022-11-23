@@ -1,8 +1,10 @@
-# Setting up the NUC
+# Documentation for On-Rover Setup
+
+## Setting up the NUC
 
 Install Ubuntu (username: rover, hostname: MRT-NUC), Open-SSH, Git, ROS-Noetic and Alias python3 as python
 
-## Setting up SSH
+### Setting up SSH
 
 * Connect the NUC via wired network (LAN) to the Router
 * Setup the IP Address as 192.168.2.2 and Netmask as 255.255.255.0
@@ -10,13 +12,10 @@ Install Ubuntu (username: rover, hostname: MRT-NUC), Open-SSH, Git, ROS-Noetic a
 * Add the IP Address of base station as well (for example: 192.168.2.3 iitbmartian-H310M-S2)
 * Reboot the NUC
 
-## Creating Workspace
+### Creating Workspace
 
 * Create a new directory `rover_ws`, create directory `src`, and run `catkin_make`
 * Git pull `rover-mobility` in src, and `catkin_make`
-
-# Rover Mobility Packages
-Repository for Rover Mobility Codes, IITB Mars Rover Team 22-23
 
 ## Roboclaws Setup
 
@@ -40,7 +39,18 @@ All 6 roboclaws are to be setup in packet serial modes. <br/>
 `ACTION=="add", ATTRS{product}=="USB Roboclaw 2x45A" ,ATTRS{devpath}=="2.1" ,SYMLINK+="Fdrive", OWNER="rover", GROUP="rover"`<br/>
 `ACTION=="add", ATTRS{product}=="USB Roboclaw 2x45A" ,ATTRS{devpath}=="2.3" ,SYMLINK+="Bdrive", OWNER="rover", GROUP="rover"`
 
-*Change devpath/product etc to get your device running. Don't forget to `sudo udev restart` after publishing new rules for a device
+* Change devpath/product etc to get your device running. Don't forget to `sudo udev restart` after publishing new rules for a device
+
+## Description of the packages
+
+| Name of Package | Description | Subscribed rostopics | Published rostopics |
+| --- | --- | --- | --- |
+| rover_drive | Drive Package: Running RoboClaws Fdrive, Bdrive, Cdrive | `/rover/drive_directives` | - |
+| rover_arm | Arm Package: Running RoboClaws shoulder_elbow_actuators, base_finger_motors, wrist_rotation_motors | `/rover/arm_directives` | - |
+| rover_light | For LED Lights | `/rover/drive_directives` | - |
+| rover_measure | Measuring voltage and current supply | - | `/rover/measure` |
+
+`rover_msg` contains the custom ROS message types `arm_msg` and `drive_msg`
 
 | Hostname | IP | Description (Ubuntu Version) |
 | --- | --- | --- |
