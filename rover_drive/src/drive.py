@@ -34,6 +34,15 @@ if __name__ == "__main__":
 
     while True:
         try:
+            centerClaw = Roboclaw("/dev/Cdrive", 9600)
+            break
+        except SerialException:
+            rospy.logwarn("Couldn't connect to Center Drive Claw. trying again...")
+            iter_time.sleep()
+    rospy.loginfo("Connected to Center Drive Claw")
+
+    while True:
+        try:
             backClaw = Roboclaw("/dev/Bdrive", 9600)
             break
         except SerialException:
@@ -42,7 +51,7 @@ if __name__ == "__main__":
     rospy.loginfo("Connected to Back Drive Claw")
 
     # initialising Drive object-------------------
-    Drive = Drive(frontClaw, backClaw)
+    Drive = Drive(frontClaw, centerClaw, backClaw)
     Drive.stop()
 
     rospy.loginfo("Subscribing to /rover/drive_directives")

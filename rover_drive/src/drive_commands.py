@@ -4,43 +4,54 @@ from std_msgs.msg import String
 
 
 class Drive:
-    def __init__(self, driver1, driver2):
+    def __init__(self, driver1, driver2, driver3):
         self.frontClaw = driver1
-        self.backClaw = driver2
+        self.centerClaw = driver2
+        self.backClaw = driver3
         self.direction = "stop"
         self.speed = 0
         self.current_exceeded = False
-        self.currents = [0, 0, 0, 0]
+        self.currents = [0, 0, 0, 0, 0, 0]
         self.current_threshold = 1000
         self.mode = "manual"
 
     def fwd(self):
         self.frontClaw.ForwardM1(0x80, self.speed)
         self.frontClaw.ForwardM2(0x80, self.speed)
+        self.centerClaw.ForwardM1(0x80, self.speed)
+        self.centerClaw.ForwardM2(0x80, self.speed)
         self.backClaw.ForwardM1(0x80, self.speed)
         self.backClaw.ForwardM2(0x80, self.speed)
 
     def bwd(self):
         self.frontClaw.BackwardM1(0x80, self.speed)
         self.frontClaw.BackwardM2(0x80, self.speed)
+        self.centerClaw.BackwardM1(0x80, self.speed)
+        self.centerClaw.BackwardM2(0x80, self.speed)
         self.backClaw.BackwardM1(0x80, self.speed)
         self.backClaw.BackwardM2(0x80, self.speed)
 
     def stop(self):
         self.frontClaw.ForwardM1(0x80, 0)
+        self.centerClaw.ForwardM1(0x80, 0)
         self.backClaw.ForwardM1(0x80, 0)
         self.frontClaw.ForwardM2(0x80, 0)
+        self.centerClaw.ForwardM2(0x80, 0)
         self.backClaw.ForwardM2(0x80, 0)
 
     def left(self):
         self.frontClaw.ForwardM1(0x80, self.speed)
         self.frontClaw.BackwardM2(0x80, self.speed)
+        self.centerClaw.ForwardM1(0x80, self.speed)
+        self.centerClaw.BackwardM2(0x80, self.speed)
         self.backClaw.ForwardM1(0x80, self.speed)
         self.backClaw.BackwardM2(0x80, self.speed)
 
     def right(self):
         self.frontClaw.BackwardM1(0x80, self.speed)
         self.frontClaw.ForwardM2(0x80, self.speed)
+        self.centerClaw.BackwardM1(0x80, self.speed)
+        self.centerClaw.ForwardM2(0x80, self.speed)
         self.backClaw.BackwardM1(0x80, self.speed)
         self.backClaw.ForwardM2(0x80, self.speed)
 
@@ -71,8 +82,9 @@ class Drive:
 
     def current_limiter(self):
         (i, self.currents[0], self.currents[1]) = self.frontClaw.ReadCurrents(0x80)
-        (i, self.currents[2], self.currents[3]) = self.backClaw.ReadCurrents(0x80)
-        for i in range(4):
+        (i, self.currents[2], self.currents[3]) = self.centerClaw.ReadCurrents(0x80)
+        (i, self.currents[4], self.currents[5]) = self.backClaw.ReadCurrents(0x80)
+        for i in range(6):
             if self.currents[i] > self.current_threshold:
                 self.stop()
                 self.current_exceeded = True
@@ -80,5 +92,6 @@ class Drive:
         self.current_exceeded = False
 
     def update_current(self):
-        (i, self.currents[0], self.currents[1]) = self.frontClaw.ReadCurrents()
-        (i, self.currents[2], self.currents[3]) = self.backClaw.ReadCurrents()
+        (i, self.currents[0], self.currents[1]) = self.frontClaw.ReadCurrents(0x80)
+        (i, self.currents[2], self.currents[3]) = self.centerClaw.ReadCurrents(0x80)
+        (i, self.currents[4], self.currents[5]) = self.backClaw.ReadCurrents(0x80)
