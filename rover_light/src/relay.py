@@ -37,6 +37,7 @@ if __name__ == "__main__":
     rb = relay_commands.FT245R()
     dev_list = rb.list_dev()
     dev = dev_list[0]
+    print(dev)
     rb.connect(dev)
     rb.switchoff(2)
     rb.switchoff(3)
