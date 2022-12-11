@@ -62,6 +62,7 @@ if __name__ == "__main__":
     while not rospy.is_shutdown():
         Drive.current_limiter()
         if not Drive.current_exceeded:
+            print("updating steer")
             Drive.update_steer()
         else:
             rospy.logwarn("Drive stopped due to excess current")
