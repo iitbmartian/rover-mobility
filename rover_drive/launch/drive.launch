@@ -1,3 +1,4 @@
 <launch>
 	<node pkg="rover_drive" name="Drive_Node" type="drive.py" output="screen" required="true" />
+	<node pkg="rover_drive" name="Drive_Topic_Node" type="drive_topics.py" output="screen" required="true" />
 </launch>
