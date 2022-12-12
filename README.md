@@ -43,11 +43,11 @@ All 6 roboclaws are to be setup in packet serial modes. <br/>
 
 ## Description of the packages
 
-| Name of Package | Description | Subscribed rostopics | Published rostopics |
-| --- | --- | --- | --- |
-| rover_drive | Drive Package: Running RoboClaws Fdrive, Bdrive, Cdrive | `/rover/drive_directives` | - |
-| rover_arm | Arm Package: Running RoboClaws shoulder_elbow_actuators, base_finger_motors, wrist_rotation_motors | `/rover/arm_directives` | - |
-| rover_light | For LED Lights | `/rover/drive_directives` | - |
-| rover_measure | Measuring voltage and current supply | - | `/rover/measure` |
+| Name of Package | Description | Subscribed rostopics                                                                            | Published rostopics       |
+| --- | --- |-------------------------------------------------------------------------------------------------|---------------------------|
+| rover_drive | Drive Package: Running RoboClaws Fdrive, Bdrive, Cdrive | `/rover/drive_directives/manual` `/rover/drive_directives/autonomous` `/rover/drive_directives` | `/rover/drive_directives` |
+| rover_arm | Arm Package: Running RoboClaws shoulder_elbow_actuators, base_finger_motors, wrist_rotation_motors | `/rover/arm_directives`                                                                         | -                         |
+| rover_light | For LED Lights | `/rover/drive_directives` `/rover/tasks_status` `/rover/light`          | `/rover/light`                  |
+| rover_measure | Measuring voltage and current supply | -                                                                                               | `/rover/measure`          |
 
 `rover_msg` contains the custom ROS message types `arm_msg` and `drive_msg`

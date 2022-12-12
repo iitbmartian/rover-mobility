@@ -9,7 +9,7 @@ import signal
 import os
 
 task_completion = 0
-drive_status = "manual"
+drive_status = "none"
 light_pub = rospy.Publisher('/rover/light', String, queue_size=1)
 light_out = String()
 
@@ -48,13 +48,21 @@ def topics_callback(inp):
     global task_completion, drive_status
     if task_completion == 0:
         if inp.mode == "autonomous":
-            drive_status = "autonomous"
-            light_out.data = "red"
-            light_pub.publish(light_out)
+            if drive_status != "autonomous":
+                light_out.data = "none"
+                light_pub.publish(light_out)
+                time.sleep(0.02)
+                drive_status = "autonomous"
+                light_out.data = "red"
+                light_pub.publish(light_out)
         elif inp.mode == "manual":
-            drive_status = "manual"
-            light_out.data = "blue"
-            light_pub.publish(light_out)
+            if drive_status != "manual":
+                light_out.data = "none"
+                light_pub.publish(light_out)
+                time.sleep(0.02)
+                drive_status = "manual"
+                light_out.data = "blue"
+                light_pub.publish(light_out)
 
 
 if __name__ == "__main__":
