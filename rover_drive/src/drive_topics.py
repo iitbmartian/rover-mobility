@@ -18,6 +18,12 @@ def manual_callback(inp):
         drive_out.direction = inp.direction
         drive_out.speed = inp.speed
         drive_pub.publish(drive_out)
+    elif inp.speed == 0 and inp.direction == "stop":
+        is_manual = False
+        drive_out.mode = inp.mode
+        drive_out.direction = inp.direction
+        drive_out.speed = inp.speed
+        drive_pub.publish(drive_out)
     else:
         is_manual = False
 
