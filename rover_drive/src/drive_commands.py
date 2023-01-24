@@ -21,7 +21,7 @@ class Drive:
         self.centerClaw.ForwardM1(0x80, self.speed)
         self.centerClaw.ForwardM2(0x80, self.speed)
         self.backClaw.ForwardM1(0x80, self.speed)
-        self.backClaw.ForwardM2(0x80, self.speed)
+        self.backClaw.BackwardM2(0x80, self.speed)
 
     def bwd(self):
         self.frontClaw.BackwardM1(0x80, self.speed)
@@ -29,7 +29,7 @@ class Drive:
         self.centerClaw.BackwardM1(0x80, self.speed)
         self.centerClaw.BackwardM2(0x80, self.speed)
         self.backClaw.BackwardM1(0x80, self.speed)
-        self.backClaw.BackwardM2(0x80, self.speed)
+        self.backClaw.ForwardM2(0x80, self.speed)
 
     def stop(self):
         self.frontClaw.ForwardM1(0x80, 0)
@@ -42,18 +42,18 @@ class Drive:
     def right(self):
         self.frontClaw.ForwardM1(0x80, self.speed)
         self.frontClaw.BackwardM2(0x80, self.speed)
-        self.centerClaw.ForwardM1(0x80, self.speed)
+        self.centerClaw.ForwardM1(0x80, 0)
         self.centerClaw.BackwardM2(0x80, self.speed)
         self.backClaw.ForwardM1(0x80, self.speed)
-        self.backClaw.BackwardM2(0x80, self.speed)
+        self.backClaw.ForwardM2(0x80, 0)
 
     def left(self):
         self.frontClaw.BackwardM1(0x80, self.speed)
         self.frontClaw.ForwardM2(0x80, self.speed)
-        self.centerClaw.BackwardM1(0x80, self.speed)
+        self.centerClaw.BackwardM1(0x80, 0)
         self.centerClaw.ForwardM2(0x80, self.speed)
         self.backClaw.BackwardM1(0x80, self.speed)
-        self.backClaw.ForwardM2(0x80, self.speed)
+        self.backClaw.BackwardM2(0x80, 0)
 
     def update_steer(self):
         if self.direction == "stop":

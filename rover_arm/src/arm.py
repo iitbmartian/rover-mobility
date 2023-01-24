@@ -24,6 +24,7 @@ def enable_actuators_motors():
         enable_shoulder_elbow_actuators = True
         enable_base_finger_motors = True
         enable_wrist_rotation_motors = True
+        enable_carriage_motors = True
     else:
         enb_shoulder_elbow_actuators = input("Enable Shoulder Elbow Actuators? ")
         if enb_shoulder_elbow_actuators == "y" or enb_shoulder_elbow_actuators == "Y" or \
@@ -45,7 +46,15 @@ def enable_actuators_motors():
             enable_wrist_rotation_motors = True
         else:
             enable_wrist_rotation_motors = False
-    return enable_shoulder_elbow_actuators, enable_base_finger_motors, enable_wrist_rotation_motors
+
+        enb_carriage_motors = input("Enable Carriage Actuator? ")
+        if enb_carriage_motors == "y" or enb_carriage_motors == "Y" or \
+                enb_carriage_motors == "yes" or enb_carriage_motors == "Yes":
+            enable_carriage_motors = True
+        else:
+            enable_carriage_motors = False
+
+    return enable_shoulder_elbow_actuators, enable_base_finger_motors, enable_wrist_rotation_motors, enable_carriage_motors
 
 
 if __name__ == "__main__":
@@ -54,7 +63,7 @@ if __name__ == "__main__":
     rospy.init_node("Arm_Node")
     rospy.loginfo("Starting Arm_Node")
     iter_time = rospy.Rate(1)
-    enable_shoulder_elbow_actuators, enable_base_finger_motors, enable_wrist_rotation_motors = enable_actuators_motors()
+    enable_shoulder_elbow_actuators, enable_base_finger_motors, enable_wrist_rotation_motors, enable_carriage_motors = enable_actuators_motors()
 
     if enable_shoulder_elbow_actuators:
         while True:
@@ -92,8 +101,20 @@ if __name__ == "__main__":
     else:
         wrist_rotation_motors = None
 
+    if enable_carriage_motors:
+        while True:
+            try:
+                carriage_motors = Roboclaw("/dev/carriage_motors", 9600)
+                break
+            except SerialException:
+                rospy.logwarn("Could not connect to Carriage Motors Claw, retrying...")
+                iter_time.sleep()
+        rospy.loginfo("Connected to Carriage Motors Claw")
+    else:
+        carriage_motors = None
+
     # initialising Arm Object-------------------
-    Arm = Arm(shoulder_elbow_actuators, base_finger_motors, wrist_rotation_motors)
+    Arm = Arm(shoulder_elbow_actuators, base_finger_motors, wrist_rotation_motors, carriage_motors)
     Arm.arm_stop()
 
     rospy.loginfo("Subscribing to /rover/arm_directives...")

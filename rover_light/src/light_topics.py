@@ -14,6 +14,9 @@ light_pub = rospy.Publisher('/rover/light', String, queue_size=1)
 light_out = String()
 
 
+# rostopic pub -1 /rover/tasks_status std_msgs/String "data: completed"
+
+
 def tasks_status(inp):
     global task_completion, drive_status
     if inp.data == "completed":
@@ -43,7 +46,7 @@ def tasks_status(inp):
     else:
         task_completion = 0
 
-        
+
 def topics_callback(inp):
     global task_completion, drive_status
     if task_completion == 0:
