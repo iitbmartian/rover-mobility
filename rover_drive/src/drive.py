@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 
-from roboclaw_3 import Roboclaw
-from drive_commands import Drive
-import rospy
-from std_msgs.msg import Float64MultiArray, String
-from rover_msgs.msg import drive_msg
-from serial.serialutil import SerialException as SerialException
+import os
 import signal
 import sys
+
+import rospy
+from serial.serialutil import SerialException as SerialException
+
+from drive_commands import Drive
+from roboclaw_3 import Roboclaw
+from rover_msgs.msg import drive_msg
 
 
 # SIGINT Handler to escape loops. Use Ctrl-C to exit
@@ -15,6 +17,13 @@ def sigint_handler(signal, frame):
     Drive.stop()
     sys.exit(0)
 
+def ping(hostname):
+    response = os.system("ping -c 1 -t 1" + hostname)
+    if response != 0:
+        print(hostname + "'s connection is weak")
+        return False
+    else:
+        return True
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, sigint_handler)
@@ -22,6 +31,8 @@ if __name__ == "__main__":
     rospy.init_node("Drive_Node")
     rospy.loginfo("Starting Drive Node")
     iter_time = rospy.Rate(1)
+
+    hostname = input("Enter Hostname of Basestation: ")
 
     while True:
         try:
@@ -62,7 +73,13 @@ if __name__ == "__main__":
     while not rospy.is_shutdown():
         Drive.current_limiter()
         if not Drive.current_exceeded:
-            Drive.update_steer()
+            if ping(hostname):
+                Drive.update_steer()
+            else:
+                Drive.stop()
+                continue_command = input("Resume Operations? ")
+                if continue_command != "y":
+                    sys.exit(0)
         else:
             rospy.logwarn("Drive stopped due to excess current")
             rospy.loginfo(Drive.currents)
