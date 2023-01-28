@@ -17,6 +17,7 @@ def sigint_handler(signal, frame):
     Drive.stop()
     sys.exit(0)
 
+
 def ping(hostname):
     response = os.system("ping -c 1 -t 1" + hostname)
     if response != 0:
@@ -24,6 +25,7 @@ def ping(hostname):
         return False
     else:
         return True
+
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, sigint_handler)
@@ -73,13 +75,18 @@ if __name__ == "__main__":
     while not rospy.is_shutdown():
         Drive.current_limiter()
         if not Drive.current_exceeded:
-            if ping(hostname):
-                Drive.update_steer()
-            else:
-                Drive.stop()
-                continue_command = input("Resume Operations? ")
-                if continue_command != "y":
-                    sys.exit(0)
+            for i in range(4):
+                if ping(hostname):
+                    Drive.update_steer()
+                    break
+                else:
+                    if i == 4:
+                        Drive.stop()
+                        continue_command = input("Resume Operations? ")
+                        if continue_command != "y":
+                            sys.exit(0)
+                    else:
+                        pass
         else:
             rospy.logwarn("Drive stopped due to excess current")
             rospy.loginfo(Drive.currents)
