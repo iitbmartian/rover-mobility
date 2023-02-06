@@ -11,7 +11,7 @@ class Arm:
         self.carriage_motors = claw4
         self.current_exceeded = False
         self.currents = [0, 0, 0, 0, 0, 0, 0, 0]
-        self.current_threshold = 400
+        self.current_threshold = 1000
         self.shoulder_actuator = {'name': "Shoulder Actuator", 'speed': 0,
                                   'direction': "stop"}  # Claw1M1; Stop: 0, Up: 1, Down: -1
         self.elbow_actuator = {'name': "Elbow Actuator", 'speed': 0,
