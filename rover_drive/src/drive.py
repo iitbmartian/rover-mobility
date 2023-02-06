@@ -25,6 +25,15 @@ def ping(hostname):
     else:
         return True
 
+def ping(hostname):
+    response = os.system("ping -c 1 -t 1" + hostname)
+    if response != 0:
+        print(hostname + "'s connection is weak")
+        return False
+    else:
+        return True
+
+
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, sigint_handler)
 
@@ -86,7 +95,7 @@ if __name__ == "__main__":
                             if continue_command != "y":
                                 sys.exit(0)
                             else:
-                                Drive.stop()        
+                                Drive.stop()
                 counter = 0
             else:
                 Drive.update_steer()
