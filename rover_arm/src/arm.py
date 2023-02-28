@@ -2,6 +2,7 @@
 
 from arm_command import Arm
 from roboclaw_3 import Roboclaw
+from arduino_rot import Arduino_Rot
 import rospy
 from std_msgs.msg import Float64MultiArray
 from rover_msgs.msg import arm_msg
@@ -40,21 +41,21 @@ def enable_actuators_motors():
         else:
             enable_base_finger_motors = False
 
-        enb_wrist_rotation_motors = input("Enable Wrist Rotation Motors? ")
+        enb_wrist_rotation_motors = input("Enable Wrist Motor? ")
         if enb_wrist_rotation_motors == "y" or enb_wrist_rotation_motors == "Y" or \
                 enb_wrist_rotation_motors == "yes" or enb_wrist_rotation_motors == "Yes":
             enable_wrist_rotation_motors = True
         else:
             enable_wrist_rotation_motors = False
 
-        enb_carriage_motors = input("Enable Carriage Actuator? ")
-        if enb_carriage_motors == "y" or enb_carriage_motors == "Y" or \
-                enb_carriage_motors == "yes" or enb_carriage_motors == "Yes":
-            enable_carriage_motors = True
+        enb_rotation_arduino = input("Enable Rotation Arduino? ")
+        if enb_rotation_arduino == "y" or enb_rotation_arduino == "Y" or \
+                enb_rotation_arduino == "yes" or enb_rotation_arduino == "Yes":
+            enable_rotation_arduino = True
         else:
-            enable_carriage_motors = False
+            enable_rotation_arduino = False
 
-    return enable_shoulder_elbow_actuators, enable_base_finger_motors, enable_wrist_rotation_motors, enable_carriage_motors
+    return enable_shoulder_elbow_actuators, enable_base_finger_motors, enable_wrist_rotation_motors, enable_rotation_arduino
 
 
 if __name__ == "__main__":
@@ -63,7 +64,7 @@ if __name__ == "__main__":
     rospy.init_node("Arm_Node")
     rospy.loginfo("Starting Arm_Node")
     iter_time = rospy.Rate(1)
-    enable_shoulder_elbow_actuators, enable_base_finger_motors, enable_wrist_rotation_motors, enable_carriage_motors = enable_actuators_motors()
+    enable_shoulder_elbow_actuators, enable_base_finger_motors, enable_wrist_rotation_motors, enable_rotation_arduino = enable_actuators_motors()
 
     if enable_shoulder_elbow_actuators:
         while True:
@@ -101,20 +102,20 @@ if __name__ == "__main__":
     else:
         wrist_rotation_motors = None
 
-    if enable_carriage_motors:
+    if enable_rotation_arduino:
         while True:
             try:
-                carriage_motors = Roboclaw("/dev/carriage_motors", 9600)
+                rotation_arduino = Roboclaw("/dev/rotation_arduino", 9600)
                 break
             except SerialException:
-                rospy.logwarn("Could not connect to Carriage Motors Claw, retrying...")
+                rospy.logwarn("Could not connect to Rotation Arduino Adapter, retrying...")
                 iter_time.sleep()
-        rospy.loginfo("Connected to Carriage Motors Claw")
+        rospy.loginfo("Connected to Rotation Arduino Adapter")
     else:
-        carriage_motors = None
+        rotation_arduino = None
 
     # initialising Arm Object-------------------
-    Arm = Arm(shoulder_elbow_actuators, base_finger_motors, wrist_rotation_motors, carriage_motors)
+    Arm = Arm(shoulder_elbow_actuators, base_finger_motors, wrist_rotation_motors, rotation_arduino)
     Arm.arm_stop()
 
     rospy.loginfo("Subscribing to /rover/arm_directives...")

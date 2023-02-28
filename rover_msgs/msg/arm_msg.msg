@@ -4,4 +4,4 @@ drive_msg base_motor
 drive_msg finger_motor
 drive_msg wrist_actuator
 drive_msg rotation_motor
-drive_msg carriage_actuator
+drive_msg elbow_rotation

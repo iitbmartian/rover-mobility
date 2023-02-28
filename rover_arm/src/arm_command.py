@@ -4,11 +4,11 @@ import rospy
 
 class Arm:
 
-    def __init__(self, claw1, claw2, claw3, claw4):
+    def __init__(self, claw1, claw2, claw3, arduinoR):
         self.shoulder_elbow_actuators = claw1
         self.base_finger_motors = claw2
         self.wrist_rotation_motors = claw3
-        self.carriage_motors = claw4
+        self.rotation_servo = arduinoR
         self.current_exceeded = False
         self.currents = [0, 0, 0, 0, 0, 0, 0, 0]
         self.current_threshold = 1000
@@ -22,9 +22,9 @@ class Arm:
                              'direction': "stop"}  # Claw2M1; Stop: 0, Clockwise: 1, Anticlockwise: -1
         self.wrist_actuator = {'name': "Wrist Actuator", 'speed': 0, 'direction': "stop"}  # Claw2M2; Stop: 0, .: 1, .: -1
         self.rotation_motor = {'name': "Gripper Motor", 'speed': 0,
-                               'direction': "stop"}  # Claw3M2; Stop: 0, close: 1, open: -1
-        self.carriage_actuator = {'name': "Carriage Actuator", 'speed': 0,
-                               'direction': "stop"}  # Claw4M1; Stop: 0, close: 1, open: -1
+                               'direction': "stop"}  # Arduino - Pin 9
+        self.elbow_rotation = {'name': "Elbow Rotation", 'speed': 0,
+                               'direction': "stop"}  # Arduino - Pin 10
 
     def update_arm_steer(self):
         if self.shoulder_elbow_actuators is not None:
@@ -35,9 +35,10 @@ class Arm:
             self.runclawM2(self.base_finger_motors, self.finger_motor)
         if self.wrist_rotation_motors is not None:
             self.runclawM1(self.wrist_rotation_motors, self.wrist_actuator)
-            self.runclawM2(self.wrist_rotation_motors, self.rotation_motor)
-        if self.carriage_motors is not None:
-            self.runclawM1(self.carriage_motors, self.carriage_actuator)
+            # self.runclawM2(self.wrist_rotation_motors, self.rotation_motor)
+        if self.elbow_rotation is not None:
+            self.runclawM1(self.rotation_servo, self.elbow_rotation)
+            self.runclawM1(self.rotation_servo, self.rotation_motor)
 
     def arm_callback(self, inp):
         self.shoulder_actuator['speed'], self.shoulder_actuator['direction'] = int(inp.shoulder_actuator.speed), inp.shoulder_actuator.direction
@@ -46,7 +47,7 @@ class Arm:
         self.finger_motor['speed'], self.finger_motor['direction'] = int(inp.finger_motor.speed), inp.finger_motor.direction
         self.wrist_actuator['speed'], self.wrist_actuator['direction'] = int(inp.wrist_actuator.speed), inp.wrist_actuator.direction
         self.rotation_motor['speed'], self.rotation_motor['direction'] = int(inp.rotation_motor.speed), inp.rotation_motor.direction
-        self.carriage_actuator['speed'], self.carriage_actuator['direction'] = int(inp.carriage_actuator.speed), inp.carriage_actuator.direction
+        self.elbow_rotation['speed'], self.elbow_rotation['direction'] = int(inp.elbow_rotation.speed), inp.elbow_rotation.direction
 
     def arm_stop(self):
         rospy.loginfo('Arm: ' + "Arm commanded to stop")
@@ -59,9 +60,9 @@ class Arm:
         if self.wrist_rotation_motors is not None:
             self.wrist_rotation_motors.ForwardM1(0x80, 0)
             self.wrist_rotation_motors.ForwardM2(0x80, 0)
-        if self.carriage_motors is not None:
-            self.carriage_motors.ForwardM1(0x80, 0)
-            self.carriage_motors.ForwardM2(0x80, 0)
+        if self.rotation_servo is not None:
+            self.rotation_motor.ForwardM1(0x80, 0)
+            self.elbow_rotation.ForwardM2(0x80, 0)
 
     def runclawM1(self, claw, cmd_dict):
         if cmd_dict['direction'] == "stop":
@@ -90,8 +91,9 @@ class Arm:
             i, self.currents[2], self.currents[3] = self.base_finger_motors.ReadCurrents(0x80)
         if self.wrist_rotation_motors is not None:
             i, self.currents[4], self.currents[5] = self.wrist_rotation_motors.ReadCurrents(0x80)
-        if self.carriage_motors is not None:
-            i, self.currents[6], self.currents[7] = self.carriage_motors.ReadCurrents(0x80)
+        # No current measurement in arduino
+        # if self.carriage_motors is not None:
+        #     i, self.currents[6], self.currents[7] = self.carriage_motors.ReadCurrents(0x80)
         for i in range(8):
             if self.currents[i] > self.current_threshold:
                 self.arm_stop()
@@ -106,5 +108,6 @@ class Arm:
             i, self.currents[2], self.currents[3] = self.base_finger_motors.ReadCurrents(0x80)
         if self.wrist_rotation_motors is not None:
             i, self.currents[4], self.currents[5] = self.wrist_rotation_motors.ReadCurrents(0x80)
-        if self.carriage_motors is not None:
-            i, self.currents[6], self.currents[7] = self.carriage_motors.ReadCurrents(0x80)
+        # No current measurement in arduino
+        # if self.carriage_motors is not None:
+        #     i, self.currents[6], self.currents[7] = self.carriage_motors.ReadCurrents(0x80)
