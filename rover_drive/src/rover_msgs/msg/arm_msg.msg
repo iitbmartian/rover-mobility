@@ -1,0 +1,9 @@
+drive_msg shoulder_actuator
+drive_msg elbow_actuator
+drive_msg base_motor
+drive_msg wrist_actuator
+drive_msg elbow_motor
+drive_msg gripper
+drive_msg gripper_rot
+drive_msg soil_box
+string bio
